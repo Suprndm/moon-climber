@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Odin" Version="1.18.147.3" />
+    <PackageReference Include="Odin" Version="1.18.147.4" />
     <PackageReference Include="Xamarin.Forms" Version="3.0.0.446417" />
   </ItemGroup>
 
