@@ -59,7 +59,7 @@ namespace MoonClimber.Game.Pages.Game
                         var block = _blocksList[i];
 
                         var blockVisualPosition = GetBlockVisualPosition(blockData);
-                        block.Setup(blockData, blockVisualPosition.X, blockVisualPosition.Y, new Deblocks.WhiteBlockType());
+                        block.Setup(blockData, blockVisualPosition.X, blockVisualPosition.Y, new Deblocks.RockBlockType());
                     }
 
                     _isUpdateting = false;
@@ -116,7 +116,7 @@ namespace MoonClimber.Game.Pages.Game
                     {
                         var blockData = newBlockDatas[i];
                         var blockVisualPosition = GetBlockVisualPosition(blockData);
-                        recycledBlocks[i].Setup(blockData, blockVisualPosition.X, blockVisualPosition.Y, new Deblocks.WhiteBlockType());
+                        recycledBlocks[i].Setup(blockData, blockVisualPosition.X, blockVisualPosition.Y, new Deblocks.RockBlockType());
                     }
 
                     _mapData = newMapData;

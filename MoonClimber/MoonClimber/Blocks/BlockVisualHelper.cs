@@ -9,32 +9,32 @@ namespace MoonClimber.Blocks
         private static IDictionary<int, BlockVisualSetup> _setups = new Dictionary<int, BlockVisualSetup>()
         {
             // isolated
-            { 1, new BlockVisualSetup() { Angle = 0 , SpriteType =  0} },
+            { 1, new BlockVisualSetup() { Angle = 0 , SpriteType =  16} },
 
             // One corner
-            { 2, new BlockVisualSetup() { Angle = 0 , SpriteType =  1} },
-            { 3, new BlockVisualSetup() { Angle = -Math.PI/2 , SpriteType =  1} },
-            { 5, new BlockVisualSetup() { Angle = -Math.PI , SpriteType =  1} },
-            { 7, new BlockVisualSetup() { Angle = Math.PI/2 , SpriteType =  1} },
+            { 2, new BlockVisualSetup() { Angle = 0 , SpriteType =  3} },
+            { 3, new BlockVisualSetup() { Angle = 0 , SpriteType =  4} },
+            { 5, new BlockVisualSetup() { Angle = 0, SpriteType =  1} },
+            { 7, new BlockVisualSetup() { Angle = 0 , SpriteType =  2} },
 
             // Two joinned corners
-            { 6, new BlockVisualSetup() { Angle = 0 , SpriteType =  2} },
-            { 15, new BlockVisualSetup() { Angle = -Math.PI/2 , SpriteType =  2} },
-            { 35, new BlockVisualSetup() { Angle = Math.PI , SpriteType =  2} },
-            { 14, new BlockVisualSetup() { Angle = Math.PI/2 , SpriteType =  2} },
+            { 6, new BlockVisualSetup() { Angle = 0 , SpriteType =  7} },
+            { 15, new BlockVisualSetup() { Angle = 0 , SpriteType =  8} },
+            { 35, new BlockVisualSetup() { Angle =0 , SpriteType =  5} },
+            { 14, new BlockVisualSetup() { Angle =0 , SpriteType =  6} },
 
             // Two opposite corners
-            { 10, new BlockVisualSetup() { Angle = 0 , SpriteType =  22} },
-            { 21, new BlockVisualSetup() { Angle = -Math.PI/2 , SpriteType =  22} },
+            { 10, new BlockVisualSetup() { Angle = 0 , SpriteType =  13} },
+            { 21, new BlockVisualSetup() { Angle = 0 , SpriteType =  14} },
 
             // three corners
-            { 30, new BlockVisualSetup() { Angle = 0 , SpriteType =  3} },
-            { 105, new BlockVisualSetup() { Angle = -Math.PI/2 , SpriteType =  3} },
-            { 70, new BlockVisualSetup() { Angle = -Math.PI , SpriteType =  3} },
-            { 42, new BlockVisualSetup() { Angle = Math.PI/2 , SpriteType =  3} },
+            { 30, new BlockVisualSetup() { Angle = 0 , SpriteType = 12} },
+            { 105, new BlockVisualSetup() { Angle =0 , SpriteType =  9} },
+            { 70, new BlockVisualSetup() { Angle = 0 , SpriteType =  10} },
+            { 42, new BlockVisualSetup() { Angle = 0 , SpriteType =  11} },
             
             // four corners
-            { 210, new BlockVisualSetup() { Angle = 0 , SpriteType =  4} },
+            { 210, new BlockVisualSetup() { Angle = 0 , SpriteType =  15} },
         };
 
         public static BlockVisualSetup GetVisualSetup(BlockData blockData)

@@ -17,7 +17,7 @@ namespace MoonClimber.Blocks
         public Block(float height, float width) : base(0, 0, height, width)
         {
             IsEnabled = false;
-            _sprite = new Sprite(SpriteConst.white_block_0, 0, 0, Width, Width, new SKPaint { Color = new SKColor(255, 255, 255) });
+            _sprite = new Sprite(SpriteConst.rock_block_1, 0, 0, Width, Width, new SKPaint { Color = new SKColor(255, 255, 255) });
             AddChild(_sprite);
         }
 
