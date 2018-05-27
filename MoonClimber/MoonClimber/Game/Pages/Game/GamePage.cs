@@ -93,7 +93,7 @@ namespace MoonClimber.Game.Pages.Game
 
                 await _mapDisplayer.Initialize();
 
-                _character = new Characters.Character(CharacterSpawnX, CharacterSpawnY, _blockSize * 2 * 0.8f, _blockSize * 0.8f);
+                _character = new Characters.Character(CharacterSpawnX, CharacterSpawnY, _blockSize * 0.8f, _blockSize * 2 * 0.8f);
                 _scene.AddChild(_character);
                 _scene.AttachCameraTo(_character);
 

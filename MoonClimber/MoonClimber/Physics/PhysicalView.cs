@@ -18,7 +18,7 @@ namespace MoonClimber.Physics
     public abstract class PhysicalView : OView, IPhysicalView
     {
 
-        protected PhysicalView(float x, float y, float height, float width) : base(x, y, height, width)
+        protected PhysicalView(float x, float y, float width, float height) : base(x, y, width, height)
         {
             CollisionPoints = new List<Point>();
             Mass = 1;

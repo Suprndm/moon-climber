@@ -26,6 +26,9 @@
         public static string rock_block_15 => "rock_block_15.png";
         public static string rock_block_16 => "rock_block_16.png";
 
+        public static string SmallWhiteHalo => "SmallWhiteHalo.png";
+        public static string WhiteHalo => "WhiteHalo.png";
+
         public static string BaseMap => "Base Map.png";
     }
 }

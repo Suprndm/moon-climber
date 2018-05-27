@@ -1,15 +1,23 @@
 ﻿using System;
+using System.Linq;
+using MoonClimber.Game.Sprites;
 using MoonClimber.Physics;
 using MoonClimber.Physics.Forces;
+using Odin.Services;
+using Odin.Sprites;
 using SkiaSharp;
 using Xamarin.Forms;
+using Rectangle = Odin.Shapes.Rectangle;
 
 namespace MoonClimber.Game.Characters
 {
     public class Character : PhysicalView
     {
         private readonly Force _movementForce;
-        public Character(float x, float y, float height, float width) : base(x, y, height, width)
+        private readonly Sprite _haloSprite;
+        private readonly Rectangle _body;
+        private readonly Logger _logger;
+        public Character(float x, float y, float width, float height) : base(x, y, width, height)
         {
             CollisionPoints.Add(new Point(-Width / 2, -Height / 2));
             CollisionPoints.Add(new Point(Width / 2, -Height / 2));
@@ -20,9 +28,39 @@ namespace MoonClimber.Game.Characters
             CollisionPoints.Add(new Point(Width / 2, 0));
 
             CanBounce = false;
-
+            _logger = GameServiceLocator.Instance.Get<Logger>();
             _movementForce = new Force(0, 0, new HumanForceType(), -1);
             ApplyForce(_movementForce);
+            var haloPaint = new SKPaint() {BlendMode = SKBlendMode.Overlay, Color = CreateColor(255, 255, 255, 150)};
+            _haloSprite = new Sprite(SpriteConst.WhiteHalo, 0, 0, height * 32, height * 32, haloPaint);
+            AddChild(_haloSprite);
+            int index = 0;
+
+            //Device.StartTimer(TimeSpan.FromMilliseconds(1000), () =>
+            //{
+            //    var values = (Enum.GetValues(typeof(SKBlendMode)).Cast<SKBlendMode>()).ToList();
+            
+            //    if (index >= values.Count)
+            //        index = 0;
+            
+            
+            //    haloPaint.BlendMode = values[index];
+            //    _logger.UpdatePermanentText1(haloPaint.BlendMode.ToString());
+            //    index++;
+            //    return true;
+            //});
+
+    
+
+            var bodyPaint = new SKPaint()
+            {
+                IsAntialias = true,
+                Color = CreateColor(255, 0, 0),
+            };
+
+                _body = new Rectangle( -width/2,-height/2,width, height, bodyPaint);
+            AddChild(_body);
+
         }
 
         public void MoveTo(float x, float y)
@@ -54,16 +92,6 @@ namespace MoonClimber.Game.Characters
             //    //Logger.Log(distance.ToString());
             //    ApplyForce(new Force(distance / 10, angle, new HumanForceType()));
             //}
-        }
-
-        public override void Render()
-        {
-            using (var paint = new SKPaint())
-            {
-                paint.IsAntialias = true;
-                paint.Color = CreateColor(255, 0, 0);
-                Canvas.DrawRect(SKRect.Create(X - Width / 2, Y - Height / 2, Width, Height), paint);
-            }
         }
     }
 }

@@ -46,6 +46,8 @@ namespace MoonClimber
                         SpriteConst.rock_block_14,
                         SpriteConst.rock_block_15,
                         SpriteConst.rock_block_16,
+                        SpriteConst.SmallWhiteHalo,
+                        SpriteConst.WhiteHalo,
                         SpriteConst.BaseMap,
                     },
                     "Resources/Graphics",
