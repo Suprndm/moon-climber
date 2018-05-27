@@ -17,7 +17,7 @@ namespace MoonClimber
 
         protected override void OnStart()
         {
-            ((OdinPage)MainPage).OnStart<Game>();
+            ((OdinPage)MainPage).OnStart<GameRoot>();
         }
 
         protected override void OnSleep()
