@@ -53,7 +53,7 @@ namespace MoonClimber.Game.Pages.Game
 
             downButton.Down += () =>
             {
-                _character.Jump();
+                _character.TryJump();
             };
 
             AddChild(downButton);
