@@ -6,17 +6,31 @@ namespace MoonClimber.Blocks.Models
 {
     public class MapData
     {
-        public MapData(IList<BlockData> blocks)
+        public MapData(IList<ChunkData> chunks)
         {
-            Blocks = blocks;
+            Initialize(chunks);
+        }
 
-            if(!blocks.Any())
+        public void Initialize(IList<ChunkData> chunks)
+        {
+            Chunks = chunks;
+
+            Blocks = new List<BlockData>();
+            foreach (var chunk in Chunks)
+            {
+                foreach (var block in chunk.Blocks)
+                {
+                    Blocks.Add(block);
+                }
+            }
+
+            if (!Blocks.Any())
                 return;
 
-            MinX = blocks.Min(b => b.X);
-            MaxX = blocks.Max(b => b.X);
-            MinY = blocks.Min(b => b.Y);
-            MaxY = blocks.Max(b => b.Y);
+            MinX = Blocks.Min(b => b.X);
+            MaxX = Blocks.Max(b => b.X);
+            MinY = Blocks.Min(b => b.Y);
+            MaxY = Blocks.Max(b => b.Y);
 
             Width = MaxX - MinX + 1;
             Height = MaxY - MinY + 1;
@@ -33,6 +47,7 @@ namespace MoonClimber.Blocks.Models
 
         public MapData()
         {
+            Chunks = new List<ChunkData>();
             Blocks = new List<BlockData>();
 
             MinX = 0;
@@ -44,18 +59,18 @@ namespace MoonClimber.Blocks.Models
             Height = 0;
         }
 
-        public IList<BlockData> Blocks { get; }
-        public BlockData[,] BlocksArray { get; }
+        public IList<BlockData> Blocks { get; set; }
+        public BlockData[,] BlocksArray { get; set; }
+        public IList<ChunkData> Chunks { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-        public int Width { get; }
-        public int Height { get; }
+        public int MinX { get; set; }
+        public int MaxX { get; set; }
+        public int MinY { get; set; }
+        public int MaxY { get; set; }
 
-        public int MinX { get; }
-        public int MaxX { get; }
-        public int MinY { get; }
-        public int MaxY { get; }
-
-        public int Count { get; }
+        public int Count { get; set; }
 
         public BlockData GetBlockByCoordinates(int x, int y)
         {

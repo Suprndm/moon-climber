@@ -1,11 +1,14 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using MoonClimber.Blocks.Models;
 
 namespace MoonClimber.Blocks.Services
 {
     public interface IMapLoader
     {
-        MapData ActualizeMap(int x, int y);
+        MapDataUpdate ActualizeMap(int x, int y, MapData mapData);
         Point GetSpawnPosition();
+
+        MapData InitializeMap(int x, int y);
     }
 }

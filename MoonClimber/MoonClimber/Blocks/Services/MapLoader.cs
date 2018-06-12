@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using MoonClimber.Blocks.Models;
 using MoonClimber.Data.ChunkData;
+using Odin.Core;
+using Odin.Maths;
 using Odin.Services;
 
 namespace MoonClimber.Blocks.Services
@@ -10,9 +13,7 @@ namespace MoonClimber.Blocks.Services
     public class MapLoader : IMapLoader
     {
         private readonly ChunkDataProvider _chunkDataProvider;
-        private bool _isInitialized;
         private ChunkData _lastCurrentChunk;
-        private IList<BlockData> _preloadedBlocks;
         private readonly Logger _logger;
 
         public MapLoader(ChunkDataProvider chunkDataProvider)
@@ -21,51 +22,58 @@ namespace MoonClimber.Blocks.Services
             _chunkDataProvider = chunkDataProvider;
         }
 
-        public MapData ActualizeMap(int x, int y)
+        public MapDataUpdate ActualizeMap(int x, int y, MapData mapData)
         {
-            if (!_isInitialized)
-            {
-                _preloadedBlocks = PreloadBlocks(x, y);
-                _lastCurrentChunk = _chunkDataProvider.GetCurrentChunk(x, y);
-                _isInitialized = true;
-            }
-            else
-            {
-                var newCurrentChunk = _chunkDataProvider.GetCurrentChunk(x, y);
+            var currentChunk = _chunkDataProvider.GetCurrentChunk(x, y);
+            var loadedChunks = new List<ChunkData>();
+            var unloadedChunks = new List<ChunkData>();
+            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
 
-                // If current chunk is not the center chunk of the loaded chunks, we reload the loaded chunks
-                if (_lastCurrentChunk.X != newCurrentChunk.X || _lastCurrentChunk.Y != newCurrentChunk.Y)
+            try
+            {
+           
+
+                var refreshedChunks = mapData.Chunks.ToList();
+
+                if (_lastCurrentChunk != currentChunk)
                 {
-                    _preloadedBlocks = PreloadBlocks(x, y);
-                    _lastCurrentChunk = newCurrentChunk;
-                }
-            }
-
-            if (_preloadedBlocks.Count > 0)
-            {
-                var surroundingBlocksList = new List<BlockData>();
-
-                var blockSize = GameRoot.ScreenWidth * AppSettings.BlockScreenRatioX;
-
-                var surroundingBlocksXCount = (int)(AppSettings.MapPreloadedRatio * GameRoot.ScreenWidth / blockSize);
-
-                var beginX = (int)(x - surroundingBlocksXCount / 2);
-                var endX = (int)(x + surroundingBlocksXCount / 2);
-                var beginY = (int)(y - surroundingBlocksXCount / 2);
-                var endY = (int)(y + surroundingBlocksXCount / 2);
-
-                foreach (var block in _preloadedBlocks)
-                {
-                    if (block.X >= beginX && block.X < endX && block.Y >= beginY && block.Y < endY)
+                    for (int i = 0; i < 8; i++)
                     {
-                        surroundingBlocksList.Add(block);
+                        for (int j = 0; j < 8; j++)
+                        {
+                            var xReference = (int)(x + (i - 4) * chunkSize);
+                            var yReference = (int)(y + (j - 4) * chunkSize);
+
+                            var chunk = _chunkDataProvider.GetCurrentChunk(xReference, yReference);
+
+                            var distance = MathHelper.Distance(new Xamarin.Forms.Point(x, y),
+                                new Xamarin.Forms.Point(chunk.Center.X, chunk.Center.Y));
+
+                            if (mapData.Chunks.Contains(chunk) && distance >= 4 * chunkSize)
+                            {
+                                unloadedChunks.Add(chunk);
+                                refreshedChunks.Remove(chunk);
+                            }
+                            else if (!mapData.Chunks.Contains(chunk) && distance <= 3 * chunkSize)
+                            {
+                                loadedChunks.Add(chunk);
+                                refreshedChunks.Add(chunk);
+                            }
+                        }
                     }
                 }
 
-                return new MapData(surroundingBlocksList);
+                mapData.Initialize(refreshedChunks);
+
+            }
+            catch (Exception e)
+            {
+              _logger.Log($"Map Actualization failed : {e.Message}");
             }
 
-            return new MapData();
+            _logger.Log($"Map Actualization succeded");
+            return new MapDataUpdate(loadedChunks, unloadedChunks);
+
         }
 
         public Point GetSpawnPosition()
@@ -73,41 +81,37 @@ namespace MoonClimber.Blocks.Services
             return _chunkDataProvider.GetSpawnPosition();
         }
 
-
-        private IList<BlockData> PreloadBlocks(int x, int y)
+        public MapData InitializeMap(int x, int y)
         {
+            var currentChunk = _chunkDataProvider.GetCurrentChunk(x, y);
+            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
+            var chunks = new List<ChunkData>();
             try
             {
-                var loadedChunks = _chunkDataProvider.GetClosestChunks(x, y);
-                var preloadedBlocks = new List<BlockData>();
-
-                foreach (var chunk in loadedChunks)
+                for (int i = 0; i < 6; i++)
                 {
-                    foreach (var block in chunk.Blocks)
+                    for (int j = 0; j < 6; j++)
                     {
-                        preloadedBlocks.Add(new BlockData()
-                        {
-                            X = block.X + AppSettings.ChunckSize * chunk.X,
-                            Y = block.Y + AppSettings.ChunckSize * chunk.Y,
-                        });
+                        var xReference = (int)(x + (i - 3) * chunkSize);
+                        var yReference = (int)(y + (j - 3) * chunkSize);
+
+                        var chunk = _chunkDataProvider.GetCurrentChunk(xReference, yReference);
+                        chunks.Add(chunk);
                     }
                 }
 
-                // Compute Neighbours
-                var tempMap = new MapData(preloadedBlocks);
-                tempMap.ComputeNeighbours();
+                _lastCurrentChunk = currentChunk;
 
-                _logger.Log($"Preloaded  {preloadedBlocks.Count} blocks");
-
-                return tempMap.Blocks;
+              
             }
             catch (Exception e)
             {
-                _logger.Log($"Failed to Preloaded blocks for {x}-{y}");
-                _logger.Log(e.ToString());
-                throw;
+                _logger.Log($"Map Initialization failed : {e.Message}");
             }
-           
+
+            _logger.Log($"Map Initialization succeded");
+
+            return new MapData(chunks);
         }
     }
 }

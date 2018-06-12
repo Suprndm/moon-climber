@@ -16,19 +16,5 @@ namespace MoonClimber.Blocks.Services
                 blockData.Bottom = mapData.GetBlockByCoordinates(blockData.X, blockData.Y - 1);
             }
         }
-
-        public static MapData Crop(this MapData mapData)
-        {
-            var newBlocks = new List<BlockData>();
-            for (int i = mapData.MinX + 1; i < mapData.MaxX; i++)
-            {
-                for (int j = mapData.MinY + 1; j < mapData.MaxY; j++)
-                {
-                    newBlocks.Add(mapData.GetBlockByCoordinates(i, j));
-                }
-            }
-
-            return new MapData(newBlocks);
-        }
     }
 }

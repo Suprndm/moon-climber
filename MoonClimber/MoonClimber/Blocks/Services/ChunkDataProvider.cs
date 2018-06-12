@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using MoonClimber.Data.ChunkData;
+using Odin.Core;
 using Odin.Services;
 
 namespace MoonClimber.Blocks.Services
@@ -44,10 +45,10 @@ namespace MoonClimber.Blocks.Services
 
         public ChunkData GetCurrentChunk(int x, int y)
         {
-            var chunkSize = AppSettings.ChunckSize;
+            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
 
-            var chunkX = x / chunkSize;
-            var chunkY = y / chunkSize;
+            var chunkX = (int)(x / chunkSize);
+            var chunkY = (int)(y / chunkSize);
             var correspondingChunk = GetByCoordinates(chunkX, chunkY);
 
             if (correspondingChunk == null)

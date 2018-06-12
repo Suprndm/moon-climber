@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using MoonClimber.Blocks.Models;
+using MoonClimber.Blocks.Services;
 using MoonClimber.Game.Sprites;
+using Odin.Core;
 using Odin.Services;
 using Odin.Sprites;
 using SkiaSharp;
@@ -59,12 +62,12 @@ namespace MoonClimber.Data.ChunkData
                         var pixelColor = spriteData.Bitmap.GetPixel(i, j);
                         if (IsWhite(pixelColor))
                         {
-                            var block = new BlockData() { X = i, Y = j-height };
+                            var block = new BlockData() { X = i, Y = j - height };
                             blocks.Add(block);
                         }
-                        else if(IsRed(pixelColor))
+                        else if (IsRed(pixelColor))
                         {
-                            _spawnPosition = new Point(i, j-height);
+                            _spawnPosition = new Point(i, j - height);
                         }
                     }
                 }
@@ -83,21 +86,21 @@ namespace MoonClimber.Data.ChunkData
         private IList<ChunkData> StoreBlocksInChunks(IList<BlockData> blocks)
         {
             var chunks = new List<ChunkData>();
-            var chunkSize = AppSettings.ChunckSize;
+            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
             foreach (var block in blocks)
             {
-                var chunkX = block.X / chunkSize;
-                var chunkY = block.Y / chunkSize;
+                var chunkX = (int)( block.X / chunkSize);
+                var chunkY = (int)(block.Y / chunkSize);
 
                 var correspondingChunk = chunks.FirstOrDefault(chunk => chunk.X == chunkX && chunk.Y == chunkY);
                 if (correspondingChunk == null)
                 {
-                    correspondingChunk = new ChunkData() { X = chunkX, Y = chunkY };
+                    correspondingChunk = new ChunkData(0, chunkX, chunkY);
                     chunks.Add(correspondingChunk);
                 }
 
-                block.X += -correspondingChunk.X * AppSettings.ChunckSize;
-                block.Y += -correspondingChunk.Y * AppSettings.ChunckSize;
+                block.X += -(int)(correspondingChunk.X *AppSettings.ChunckSizeU * ORoot.U);
+                block.Y += -(int)(correspondingChunk.Y * AppSettings.ChunckSizeU * ORoot.U);
 
                 correspondingChunk.Blocks.Add(block);
             }
@@ -113,6 +116,10 @@ namespace MoonClimber.Data.ChunkData
             var blocks = LoadBlocksFromImage(SpriteConst.BaseMap);
 
             var chunks = StoreBlocksInChunks(blocks);
+
+            var completeMapData = new MapData(chunks);
+
+            completeMapData.ComputeNeighbours(); 
 
             Data = chunks;
         }

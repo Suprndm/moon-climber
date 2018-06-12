@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MoonClimber.Blocks;
 using MoonClimber.Blocks.Services;
 using MoonClimber.Data.ChunkData;
 using MoonClimber.Game.Sprites;
@@ -67,6 +68,7 @@ namespace MoonClimber
             container.RegisterType<IChunkDataProvider, ChunkDataProvider>();
             container.RegisterType<IChunkDataRepository, ChunkDataRepository>();
             container.RegisterType<IMapLoader, MapLoader>();
+            container.RegisterType<BlockSpriteProvider>();
         }
 
         protected override void OnInitialized()

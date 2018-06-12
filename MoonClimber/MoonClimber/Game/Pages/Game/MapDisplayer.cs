@@ -7,8 +7,8 @@ using MoonClimber.Blocks;
 using MoonClimber.Blocks.Models;
 using MoonClimber.Blocks.Services;
 using MoonClimber.Data.ChunkData;
+using MoonClimber.Game.Deblocks;
 using MoonClimber.Physics;
-using MoonClimber.Services;
 using Odin.Containers;
 using Odin.Core;
 using Odin.Services;
@@ -23,18 +23,29 @@ namespace MoonClimber.Game.Pages.Game
         private IList<Block> _blocksList;
         private IMapLoader _mapLoader;
         private readonly Logger _logger;
-        private Container _blocksContainer;
+        private Container _chunksContainer;
         private MapData _mapData;
-
+        private SKPaint _mapPaint;
         private Point _lastPositionProcessed;
-
+        private IList<Chunk> _chunks;
         private bool _isUpdateting;
-
+        private SKImage _skImage;
         public MapDisplayer()
         {
             _logger = GameServiceLocator.Instance.Get<Logger>();
-            _mapLoader = GameServiceLocator.Instance.Get<IMapLoader>();
+            try
+            {
+                _mapLoader = GameServiceLocator.Instance.Get<IMapLoader>();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             _isUpdateting = true;
+            _mapPaint = new SKPaint() { Color = CreateColor(255, 255, 255) };
+            _chunks = new List<Chunk>();
         }
 
         public Point GetSpawnPosition()
@@ -49,17 +60,16 @@ namespace MoonClimber.Game.Pages.Game
             {
                 try
                 {
-                    _mapData = _mapLoader.ActualizeMap(0, 0);
+                    _mapData = _mapLoader.InitializeMap(0, 0);
                     _lastPositionProcessed = new Point(0, 0);
                     PhysicalEngine.Instance.DeclareMapData(_mapData);
-                    // InitialSetup
-                    for (int i = 0; i < _mapData.Blocks.Count; i++)
-                    {
-                        var blockData = _mapData.Blocks[i];
-                        var block = _blocksList[i];
 
-                        var blockVisualPosition = GetBlockVisualPosition(blockData);
-                        block.Setup(blockData, blockVisualPosition.X, blockVisualPosition.Y, new Deblocks.RockBlockType());
+                    // InitialSetup
+                    foreach (var chunkData in _mapData.Chunks)
+                    {
+                        var chunk = new Chunk(chunkData);
+                        _chunksContainer.AddContent(chunk);
+                        _chunks.Add(chunk);
                     }
 
                     _isUpdateting = false;
@@ -81,51 +91,39 @@ namespace MoonClimber.Game.Pages.Game
                 try
                 {
                     _isUpdateting = true;
-                    var newMapData = _mapLoader.ActualizeMap(x, y);
-                    var previousMapData = _mapData;
-                    PhysicalEngine.Instance.DeclareMapData(newMapData);
-                    int recycledCount = 0;
-                    foreach (var block in _blocksList)
+                    var mapDataUpdate = _mapLoader.ActualizeMap(x, y, _mapData);
+                    if (mapDataUpdate.LoadedChunks.Any() || mapDataUpdate.UnloadedChunks.Any())
                     {
-                        if (!block.IsRecycled() && !newMapData.IsInsideMap(block.Data.X, block.Data.Y))
+                        PhysicalEngine.Instance.DeclareMapData(_mapData);
+                        int recycledCount = 0;
+
+                        foreach (var loadedChunk in mapDataUpdate.LoadedChunks)
                         {
-                            block.Recycle();
-                            recycledCount++;
+                            var chunk = new Chunk(loadedChunk);
+                            _chunksContainer.AddContent(chunk);
+                            _chunks.Add(chunk);
+                            _logger.Log($"Added chunk at X:{chunk.X} Y:{chunk.Y}");
                         }
-                        else
+
+
+                        foreach (var unloadedChunk in mapDataUpdate.UnloadedChunks)
                         {
-                            //var updatedBlockData = newMapData.GetBlockByCoordinates(block.Data.X, block.Data.Y);
-                            //block.Setup(updatedBlockData); =
+                            var chunk = _chunks.FirstOrDefault(c => c.ChunkData == unloadedChunk);
+                            if (chunk != null)
+                            {
+                                _chunksContainer.RemoveContentContent(chunk);
+                                _chunks.Remove(chunk);
+                                _logger.Log($"Removed chunk at X:{chunk.X} Y:{chunk.Y}");
+                            }
                         }
+
+                        _isUpdateting = false;
                     }
 
-                    _logger.Log($"Recycled {recycledCount} blocks");
-                    var recycledBlocks = _blocksList.Where(b => b.IsRecycled()).ToList();
-                    var newBlockDatas = new List<BlockData>();
-
-                    foreach (var blockData in newMapData.Blocks)
-                    {
-                        if (!previousMapData.IsInsideMap(blockData.X, blockData.Y))
-                            newBlockDatas.Add(blockData);
-                    }
-
-                    _logger.Log($"Added {newBlockDatas.Count} blocks");
-
-
-                    for (int i = 0; i < newBlockDatas.Count; i++)
-                    {
-                        var blockData = newBlockDatas[i];
-                        var blockVisualPosition = GetBlockVisualPosition(blockData);
-                        recycledBlocks[i].Setup(blockData, blockVisualPosition.X, blockVisualPosition.Y, new Deblocks.RockBlockType());
-                    }
-
-                    _mapData = newMapData;
-
-                    _isUpdateting = false;
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    _logger.Log($"Failed to Update Display : {e.Message}");
                     _isUpdateting = false;
                 }
 
@@ -151,6 +149,8 @@ namespace MoonClimber.Game.Pages.Game
                 UpdateDisplay(newX, newY);
                 _lastPositionProcessed = new Point(newX, newY);
             }
+            _logger.UpdatePermanentText3($"x:{X}-y:{Y}");
+            Canvas.DrawImage(_skImage, X, Y - 1500, _mapPaint);
         }
 
         private SKPoint GetBlockVisualPosition(BlockData blockData)
@@ -165,21 +165,7 @@ namespace MoonClimber.Game.Pages.Game
         {
             return Task.Run(async () =>
            {
-               _blockSize = GameRoot.ScreenWidth * AppSettings.BlockScreenRatioX;
-               var blocksCount = GameRoot.ScreenWidth / _blockSize * GameRoot.ScreenWidth / _blockSize * AppSettings.MapPreloadedRatio * 2;
-               _blocksList = new List<Block>();
-
-               _blocksContainer = new Container();
-               for (int i = 0; i < blocksCount; i++)
-               {
-                   var block = new Block(_blockSize, _blockSize);
-                   _blocksList.Add(block);
-                   _blocksContainer.AddContent(block);
-               }
-
-               AddChild(_blocksContainer);
-
-               _logger.Log($"Setup {_blocksList.Count} blockViews");
+               _chunksContainer = new Container();
 
                await InitializeDisplay();
            });
