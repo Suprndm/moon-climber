@@ -48,8 +48,8 @@ namespace MoonClimber.Blocks
 
         public static IList<Segment> GetBlockSegments(BlockData blockData, float blocksize)
         {
-            var blockX = blockData.X;
-            var blockY = blockData.Y;
+            var blockX = blockData.AbsoluteX;
+            var blockY = blockData.AbsoluteY;
 
             var segments = new List<Segment>();
 

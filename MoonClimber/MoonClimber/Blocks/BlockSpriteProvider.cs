@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using MoonClimber.Data.ChunkData;
-using MoonClimber.Game.Deblocks;
 using Odin.Core;
 using Odin.Services;
 using Odin.Sprites;
@@ -59,15 +58,14 @@ namespace MoonClimber.Blocks
             {
                 // Load rockSprites
                 var rockSprites = new Dictionary<int, Sprite>();
-                var rockBlockType = new RockBlockType();
                 foreach (var setup in _setups.Values)
                 {
-                    var spriteName = GenerateSpriteName(rockBlockType, setup);
-                    var sprite = new Sprite(spriteName, 0, 0, AppSettings.ChunckSizeU * ORoot.U, AppSettings.ChunckSizeU * ORoot.U, paint);
+                    var spriteName = GenerateSpriteName(BlockType.rock_block, setup);
+                    var sprite = new Sprite(spriteName, 0, 0, AppSettings.BlockSizeU * ORoot.ScreenUnit, AppSettings.BlockSizeU * ORoot.ScreenUnit, paint);
                     rockSprites.Add(setup.SpriteType, sprite);
                 }
 
-                _spritesData.Add(new KeyValuePair<BlockType, IDictionary<int, Sprite>>(new RockBlockType(), rockSprites));
+                _spritesData.Add(new KeyValuePair<BlockType, IDictionary<int, Sprite>>(BlockType.rock_block, rockSprites));
             }
             catch (Exception e)
             {
@@ -102,7 +100,7 @@ namespace MoonClimber.Blocks
 
         private string GenerateSpriteName(BlockType blockType, BlockVisualSetup blockVisualSetup)
         {
-            return $"{blockType.GetName()}_{blockVisualSetup.SpriteType}.png";
+            return $"{blockType}_{blockVisualSetup.SpriteType}.png";
         }
     }
 }

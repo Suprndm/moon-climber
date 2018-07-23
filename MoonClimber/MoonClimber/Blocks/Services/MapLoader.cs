@@ -27,12 +27,14 @@ namespace MoonClimber.Blocks.Services
             var currentChunk = _chunkDataProvider.GetCurrentChunk(x, y);
             var loadedChunks = new List<ChunkData>();
             var unloadedChunks = new List<ChunkData>();
-            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
+
+            if (currentChunk == null) return new MapDataUpdate(loadedChunks, unloadedChunks);
+        
 
             try
             {
-           
 
+                var blockSize = ORoot.ScreenUnit * AppSettings.BlockSizeU;
                 var refreshedChunks = mapData.Chunks.ToList();
 
                 if (_lastCurrentChunk != currentChunk)
@@ -41,37 +43,39 @@ namespace MoonClimber.Blocks.Services
                     {
                         for (int j = 0; j < 8; j++)
                         {
-                            var xReference = (int)(x + (i - 4) * chunkSize);
-                            var yReference = (int)(y + (j - 4) * chunkSize);
+                            var xReference = (int)(x + (i - 4) * currentChunk.Size);
+                            var yReference = (int)(y + (j - 4) * currentChunk.Size);
 
                             var chunk = _chunkDataProvider.GetCurrentChunk(xReference, yReference);
 
-                            var distance = MathHelper.Distance(new Xamarin.Forms.Point(x, y),
-                                new Xamarin.Forms.Point(chunk.Center.X, chunk.Center.Y));
+                            if (chunk != null)
+                            {
+                                var distance = MathHelper.Distance(new Xamarin.Forms.Point(x * blockSize, y * blockSize),
+                                    new Xamarin.Forms.Point(chunk.Center.X, chunk.Center.Y));
 
-                            if (mapData.Chunks.Contains(chunk) && distance >= 4 * chunkSize)
-                            {
-                                unloadedChunks.Add(chunk);
-                                refreshedChunks.Remove(chunk);
-                            }
-                            else if (!mapData.Chunks.Contains(chunk) && distance <= 3 * chunkSize)
-                            {
-                                loadedChunks.Add(chunk);
-                                refreshedChunks.Add(chunk);
+                                if (mapData.Chunks.Contains(chunk) && distance >= 4 * currentChunk.Size * blockSize)
+                                {
+                                    unloadedChunks.Add(chunk);
+                                    refreshedChunks.Remove(chunk);
+                                }
+                                else if (!mapData.Chunks.Contains(chunk) && distance <= 3 * currentChunk.Size*blockSize)
+                                {
+                                    loadedChunks.Add(chunk);
+                                    refreshedChunks.Add(chunk);
+                                }
                             }
                         }
                     }
                 }
 
                 mapData.Initialize(refreshedChunks);
-
+                _logger.Log($"Map Actualization succeded");
             }
             catch (Exception e)
             {
-              _logger.Log($"Map Actualization failed : {e.Message}");
+                _logger.Log($"Map Actualization failed : {e.Message}");
             }
 
-            _logger.Log($"Map Actualization succeded");
             return new MapDataUpdate(loadedChunks, unloadedChunks);
 
         }
@@ -84,7 +88,10 @@ namespace MoonClimber.Blocks.Services
         public MapData InitializeMap(int x, int y)
         {
             var currentChunk = _chunkDataProvider.GetCurrentChunk(x, y);
-            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
+
+            var nbOfBlocksPerChunkRow = (int)Math.Sqrt(AppSettings.BlocksPerChunk);
+            var chunkSize = AppSettings.BlockSizeU * nbOfBlocksPerChunkRow * ORoot.ScreenUnit;
+
             var chunks = new List<ChunkData>();
             try
             {
@@ -92,17 +99,20 @@ namespace MoonClimber.Blocks.Services
                 {
                     for (int j = 0; j < 6; j++)
                     {
-                        var xReference = (int)(x + (i - 3) * chunkSize);
-                        var yReference = (int)(y + (j - 3) * chunkSize);
+                        var xReference = (int)(x + (i - 3)* nbOfBlocksPerChunkRow);
+                        var yReference = (int)(y + (j - 3)* nbOfBlocksPerChunkRow);
 
                         var chunk = _chunkDataProvider.GetCurrentChunk(xReference, yReference);
-                        chunks.Add(chunk);
+                        if (chunk != null)
+                        {
+                            chunks.Add(chunk);
+                        }
                     }
                 }
 
                 _lastCurrentChunk = currentChunk;
 
-              
+
             }
             catch (Exception e)
             {

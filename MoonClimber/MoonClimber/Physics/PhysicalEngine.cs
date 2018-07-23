@@ -9,6 +9,7 @@ using MoonClimber.Blocks;
 using MoonClimber.Blocks.Models;
 using MoonClimber.Maths.Segments;
 using MoonClimber.Physics.Forces;
+using Odin.Core;
 using Odin.Maths;
 using Odin.Services;
 using Xamarin.Forms;
@@ -39,7 +40,7 @@ namespace MoonClimber.Physics
         private PhysicalEngine()
         {
             _logger = GameServiceLocator.Instance.Get<Logger>();
-            _blockSize = GameRoot.ScreenWidth * AppSettings.BlockScreenRatioX;
+            _blockSize = AppSettings.BlockSizeU * ORoot.ScreenUnit;
             _stopwatch = new Stopwatch();
             _physicalViews = new ConcurrentBag<IPhysicalView>();
 

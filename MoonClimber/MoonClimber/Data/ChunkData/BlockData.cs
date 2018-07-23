@@ -4,8 +4,11 @@ namespace MoonClimber.Data.ChunkData
 {
     public class BlockData
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int RelativeX { get; set; }
+        public int RelativeY { get; set; }
+
+        public int AbsoluteX { get; set; }
+        public int AbsoluteY { get; set; }
 
         [JsonIgnore]
         public BlockData Left { get; set; }

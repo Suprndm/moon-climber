@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MoonClimber.Maths;
 using MoonClimber.Physics;
 using Odin.Controls;
+using Odin.Core;
 using Odin.Navigation.Pages;
 using Odin.Scene;
 using Odin.Services;
@@ -27,7 +28,7 @@ namespace MoonClimber.Game.Pages.Game
             _logger = GameServiceLocator.Instance.Get<Logger>();
             DeclarePannable(this);
 
-            _blockSize = GameRoot.ScreenWidth * AppSettings.BlockScreenRatioX;
+            _blockSize = ORoot.ScreenUnit * AppSettings.BlockSizeU;
 
             _scene = new Scene();
             AddChild(_scene);
@@ -79,29 +80,26 @@ namespace MoonClimber.Game.Pages.Game
                 var charMoveX = (float)tilt.X * characterMoveSpeed;
                 var charMoveY = (float)tilt.Y * characterMoveSpeed;
                 _character.MoveBy(charMoveX, charMoveY);
+
             }
         }
 
-        protected override void OnActivated(object parameter = null)
+        protected  override async void OnActivated(object parameter = null)
         {
-            Task.Run(async () =>
-            {
-                var spawnPosition = _mapDisplayer.GetSpawnPosition();
-                CharacterSpawnX = _blockSize * spawnPosition.X;
-                CharacterSpawnY = _blockSize * (spawnPosition.Y - 1);
+            var spawnPosition = _mapDisplayer.GetSpawnPosition();
+            CharacterSpawnX = _blockSize * spawnPosition.X;
+            CharacterSpawnY = _blockSize * (spawnPosition.Y - 1);
 
+            await _mapDisplayer.Initialize(spawnPosition.X, spawnPosition.Y);
 
-                await _mapDisplayer.Initialize();
+            _character = new Characters.Character(CharacterSpawnX, CharacterSpawnY, _blockSize * 0.8f, _blockSize * 2 * 0.8f);
+            _scene.AddChild(_character);
+            _scene.AttachCameraTo(_character);
 
-                _character = new Characters.Character(CharacterSpawnX, CharacterSpawnY, _blockSize * 0.8f, _blockSize * 2 * 0.8f);
-                _scene.AddChild(_character);
-                _scene.AttachCameraTo(_character);
+            _joystick = new Joystick();
+            AddChild(_joystick);
 
-                _joystick = new Joystick();
-                AddChild(_joystick);
-
-                _joystick.TiltChanged += _joystick_TiltChanged;
-            });
+            _joystick.TiltChanged += _joystick_TiltChanged;
         }
 
         protected override void OnDeactivated()

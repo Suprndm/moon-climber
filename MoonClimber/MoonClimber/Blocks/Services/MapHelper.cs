@@ -10,10 +10,10 @@ namespace MoonClimber.Blocks.Services
         {
             foreach (var blockData in mapData.Blocks)
             {
-                blockData.Left = mapData.GetBlockByCoordinates(blockData.X - 1, blockData.Y);
-                blockData.Right = mapData.GetBlockByCoordinates(blockData.X + 1, blockData.Y);
-                blockData.Top = mapData.GetBlockByCoordinates(blockData.X, blockData.Y + 1);
-                blockData.Bottom = mapData.GetBlockByCoordinates(blockData.X, blockData.Y - 1);
+                blockData.Left = mapData.GetBlockByCoordinates(blockData.AbsoluteX - 1, blockData.AbsoluteY);
+                blockData.Right = mapData.GetBlockByCoordinates(blockData.AbsoluteX + 1, blockData.AbsoluteY);
+                blockData.Top = mapData.GetBlockByCoordinates(blockData.AbsoluteX, blockData.AbsoluteY + 1);
+                blockData.Bottom = mapData.GetBlockByCoordinates(blockData.AbsoluteX, blockData.AbsoluteY - 1);
             }
         }
     }

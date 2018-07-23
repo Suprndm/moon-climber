@@ -27,10 +27,10 @@ namespace MoonClimber.Blocks.Models
             if (!Blocks.Any())
                 return;
 
-            MinX = Blocks.Min(b => b.X);
-            MaxX = Blocks.Max(b => b.X);
-            MinY = Blocks.Min(b => b.Y);
-            MaxY = Blocks.Max(b => b.Y);
+            MinX = Blocks.Min(b => b.AbsoluteX);
+            MaxX = Blocks.Max(b => b.AbsoluteX);
+            MinY = Blocks.Min(b => b.AbsoluteY);
+            MaxY = Blocks.Max(b => b.AbsoluteY);
 
             Width = MaxX - MinX + 1;
             Height = MaxY - MinY + 1;
@@ -39,7 +39,7 @@ namespace MoonClimber.Blocks.Models
 
             foreach (var blockData in Blocks)
             {
-                BlocksArray[blockData.X - MinX, blockData.Y - MinY] = blockData;
+                BlocksArray[blockData.AbsoluteX - MinX, blockData.AbsoluteY - MinY] = blockData;
             }
 
             Count = Blocks.Count;

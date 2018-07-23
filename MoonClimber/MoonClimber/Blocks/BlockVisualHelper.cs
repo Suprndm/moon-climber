@@ -55,7 +55,7 @@ namespace MoonClimber.Blocks
 
         public static string GenerateSpriteName(BlockType blockType, BlockVisualSetup blockVisualSetup)
         {
-            return $"{blockType.GetName()}_{blockVisualSetup.SpriteType}.png";
+            return $"{blockType}_{blockVisualSetup.SpriteType}.png";
         }
     }
 }

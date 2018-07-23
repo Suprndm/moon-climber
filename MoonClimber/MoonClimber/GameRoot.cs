@@ -12,6 +12,7 @@ using Odin.Paint;
 using Odin.Services;
 using Odin.Sprites;
 using Unity;
+using Unity.Lifetime;
 
 namespace MoonClimber
 {
@@ -54,6 +55,10 @@ namespace MoonClimber
                     "Resources/Graphics",
                     ScreenWidth,
                     ScreenHeight);
+
+
+               var chunkDataRepository = GameServiceLocator.Instance.Get<IChunkDataRepository>();
+               chunkDataRepository.Initialize();
             }
             catch (Exception e)
             {
@@ -65,10 +70,10 @@ namespace MoonClimber
 
         public override void RegisterServices(UnityContainer container)
         {
-            container.RegisterType<IChunkDataProvider, ChunkDataProvider>();
-            container.RegisterType<IChunkDataRepository, ChunkDataRepository>();
-            container.RegisterType<IMapLoader, MapLoader>();
-            container.RegisterType<BlockSpriteProvider>();
+            container.RegisterType<IChunkDataProvider, ChunkDataProvider>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IChunkDataRepository, ChunkDataRepository>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IMapLoader, MapLoader>(new ContainerControlledLifetimeManager());
+            container.RegisterType<BlockSpriteProvider>(new ContainerControlledLifetimeManager());
         }
 
         protected override void OnInitialized()

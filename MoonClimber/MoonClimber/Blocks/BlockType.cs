@@ -1,7 +1,7 @@
 ﻿namespace MoonClimber.Blocks
 {
-    public abstract class BlockType
+    public enum BlockType
     {
-        public abstract string GetName();
+        rock_block,
     }
 }

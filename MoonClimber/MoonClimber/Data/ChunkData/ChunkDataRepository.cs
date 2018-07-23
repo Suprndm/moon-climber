@@ -17,11 +17,9 @@ namespace MoonClimber.Data.ChunkData
         protected IList<ChunkData> Data;
         private Point _spawnPosition;
         private readonly Logger _logger;
-
         public ChunkDataRepository(Logger logger)
         {
             _logger = logger;
-            Initialize();
         }
 
         public ChunkData Get(int id)
@@ -62,12 +60,12 @@ namespace MoonClimber.Data.ChunkData
                         var pixelColor = spriteData.Bitmap.GetPixel(i, j);
                         if (IsWhite(pixelColor))
                         {
-                            var block = new BlockData() { X = i, Y = j - height };
+                            var block = new BlockData() { AbsoluteX = i, AbsoluteY = j };
                             blocks.Add(block);
                         }
                         else if (IsRed(pixelColor))
                         {
-                            _spawnPosition = new Point(i, j - height);
+                            _spawnPosition = new Point(i, j);
                         }
                     }
                 }
@@ -86,23 +84,22 @@ namespace MoonClimber.Data.ChunkData
         private IList<ChunkData> StoreBlocksInChunks(IList<BlockData> blocks)
         {
             var chunks = new List<ChunkData>();
-            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
+            var nbOfBlocksPerChunkRow = (int)Math.Sqrt(AppSettings.BlocksPerChunk);
             foreach (var block in blocks)
             {
-                var chunkX = (int)( block.X / chunkSize);
-                var chunkY = (int)(block.Y / chunkSize);
+                var chunkX = (int)(block.AbsoluteX / nbOfBlocksPerChunkRow);
+                var chunkY = (int)(block.AbsoluteY / nbOfBlocksPerChunkRow);
 
                 var correspondingChunk = chunks.FirstOrDefault(chunk => chunk.X == chunkX && chunk.Y == chunkY);
                 if (correspondingChunk == null)
                 {
-                    correspondingChunk = new ChunkData(0, chunkX, chunkY);
+                    correspondingChunk = new ChunkData(0, chunkX, chunkY, nbOfBlocksPerChunkRow);
                     chunks.Add(correspondingChunk);
                 }
 
-                block.X += -(int)(correspondingChunk.X *AppSettings.ChunckSizeU * ORoot.U);
-                block.Y += -(int)(correspondingChunk.Y * AppSettings.ChunckSizeU * ORoot.U);
-
                 correspondingChunk.Blocks.Add(block);
+                block.RelativeX = block.AbsoluteX - chunkX * nbOfBlocksPerChunkRow;
+                block.RelativeY = block.AbsoluteY - chunkY * nbOfBlocksPerChunkRow;
             }
 
             _logger.Log($"Built {chunks.Count} chunks ");
@@ -110,7 +107,7 @@ namespace MoonClimber.Data.ChunkData
             return chunks;
         }
 
-        private void Initialize()
+        public void Initialize()
         {
 
             var blocks = LoadBlocksFromImage(SpriteConst.BaseMap);
@@ -119,7 +116,7 @@ namespace MoonClimber.Data.ChunkData
 
             var completeMapData = new MapData(chunks);
 
-            completeMapData.ComputeNeighbours(); 
+            completeMapData.ComputeNeighbours();
 
             Data = chunks;
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using MoonClimber.Data.ChunkData;
-using MoonClimber.Game.Deblocks;
 using Odin.Containers;
 using Odin.Core;
 using Odin.Services;
@@ -16,36 +15,39 @@ namespace MoonClimber.Blocks
         private readonly SKPaint _paint;
 
         public ChunkData ChunkData { get; set; }
+
         public Chunk(ChunkData chunkData) : base(
-            chunkData.X * ORoot.U * AppSettings.ChunckSizeU,
-            chunkData.Y * ORoot.U * AppSettings.ChunckSizeU,
-            ORoot.U * AppSettings.ChunckSizeU,
-            ORoot.U * AppSettings.ChunckSizeU)
+           (float)chunkData.TopLeft.X,
+           (float)chunkData.TopLeft.Y,
+            chunkData.Size * AppSettings.BlockSizeU * ORoot.ScreenUnit,
+            chunkData.Size * AppSettings.BlockSizeU * ORoot.ScreenUnit)
         {
             var blockSpriteProvider = GameServiceLocator.Instance.Get<BlockSpriteProvider>();
 
             ChunkData = chunkData;
 
-            _paint = new SKPaint() {Color = new SKColor(255, 255, 255)};
+            _paint = new SKPaint() { Color = new SKColor(255, 255, 255) };
 
             var surface = SKSurface.Create(
-                (int)(ORoot.U * AppSettings.ChunckSizeU),
-                (int)(ORoot.U * AppSettings.ChunckSizeU), 
-                SKColorType.Rgba8888, 
+                (int)Width,
+                (int)Height,
+                SKColorType.Rgba8888,
                 SKAlphaType.Unpremul);
 
-            var rockBlockType = new RockBlockType();
             var canvas = surface.Canvas;
 
             foreach (var block in chunkData.Blocks)
             {
-                var sprite = blockSpriteProvider.GetBlockSprite(rockBlockType, block);
-                sprite.X = block.X - chunkData.X * Width;
-                sprite.Y = block.Y - chunkData.Y * Height;
+                var sprite = blockSpriteProvider.GetBlockSprite(BlockType.rock_block, block);
+                sprite.X = block.RelativeX * AppSettings.BlockSizeU * ORoot.ScreenUnit + sprite.Width / 2;
+                sprite.Y = block.RelativeY * AppSettings.BlockSizeU * ORoot.ScreenUnit + sprite.Height / 2;
 
                 sprite.SetCanvas(canvas);
                 sprite.Render(new OViewState());
             }
+
+            _y -= AppSettings.BlockSizeU * ORoot.ScreenUnit / 2;
+            _x -= AppSettings.BlockSizeU * ORoot.ScreenUnit / 2;
 
             _chunkImage = surface.Snapshot();
 

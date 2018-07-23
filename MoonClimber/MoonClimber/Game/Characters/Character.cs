@@ -102,6 +102,9 @@ namespace MoonClimber.Game.Characters
 
         public void MoveBy(float x, float y)
         {
+         
+            _logger.UpdatePermanentText1($"char {_x}, {_y}");
+
 
             Movement.Amount = x;
 

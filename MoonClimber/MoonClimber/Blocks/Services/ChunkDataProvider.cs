@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MoonClimber.Data.ChunkData;
@@ -7,7 +8,7 @@ using Odin.Services;
 
 namespace MoonClimber.Blocks.Services
 {
-    public class ChunkDataProvider: IChunkDataProvider
+    public class ChunkDataProvider : IChunkDataProvider
     {
         private readonly IChunkDataRepository _chunkDataRepository;
         private readonly Logger _logger;
@@ -45,19 +46,19 @@ namespace MoonClimber.Blocks.Services
 
         public ChunkData GetCurrentChunk(int x, int y)
         {
-            var chunkSize = AppSettings.ChunckSizeU * ORoot.U;
+            var nbOfBlocksPerChunkRow = (int)Math.Sqrt(AppSettings.BlocksPerChunk);
 
-            var chunkX = (int)(x / chunkSize);
-            var chunkY = (int)(y / chunkSize);
+            var chunkX = (int)(x / nbOfBlocksPerChunkRow);
+            var chunkY = (int)(y / nbOfBlocksPerChunkRow);
             var correspondingChunk = GetByCoordinates(chunkX, chunkY);
 
             if (correspondingChunk == null)
             {
-                _logger.Log("Out of the MAP - no chunk data here");
+                //_logger.Log("Out of the MAP - no chunk data here");
             }
             else
             {
-                _logger.Log($"Found Chunk for {x}-{y}");
+                //_logger.Log($"Found Chunk for {x}-{y}");
             }
 
             return correspondingChunk;
