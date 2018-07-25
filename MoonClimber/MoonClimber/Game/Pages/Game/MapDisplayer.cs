@@ -69,15 +69,12 @@ namespace MoonClimber.Game.Pages.Game
                         var chunk = new Chunk(chunkData);
                         _chunksContainer.AddContent(chunk);
                         _chunks.Add(chunk);
-                        _logger.Log($"Added chunk at X:{chunk.X} Y:{chunk.Y}");
                     }
 
                     _isUpdateting = false;
-                    _logger.Log("Initialized Map Display");
                 }
                 catch (Exception e)
                 {
-                    _logger.Log("Failed to Initialize Map Display");
                     _logger.Log(e.ToString());
                 }
 
@@ -90,6 +87,8 @@ namespace MoonClimber.Game.Pages.Game
             {
                 try
                 {
+                    _isUpdateting = true;
+
                     var mapDataUpdate = _mapLoader.ActualizeMap(x, y, _mapData);
                     if (mapDataUpdate.LoadedChunks.Any() || mapDataUpdate.UnloadedChunks.Any())
                     {
@@ -101,7 +100,6 @@ namespace MoonClimber.Game.Pages.Game
                             var chunk = new Chunk(loadedChunk);
                             _chunksContainer.AddContent(chunk);
                             _chunks.Add(chunk);
-                            _logger.Log($"Added chunk at X:{chunk.X} Y:{chunk.Y}");
                         }
 
 

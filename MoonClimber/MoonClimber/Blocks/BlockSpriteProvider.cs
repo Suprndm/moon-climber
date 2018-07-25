@@ -69,10 +69,7 @@ namespace MoonClimber.Blocks
             }
             catch (Exception e)
             {
-                _logger.Log($"Failed to load blockSprites :{e.Message}");
             }
-
-            _logger.Log($"Successfully load blockSprites");
         }
 
         public Sprite GetBlockSprite(BlockType blockType, BlockData blockData)

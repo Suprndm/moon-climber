@@ -15,6 +15,7 @@ namespace MoonClimber.Blocks
         private readonly SKPaint _paint;
 
         public ChunkData ChunkData { get; set; }
+        private readonly Logger _logger;
 
         public Chunk(ChunkData chunkData) : base(
            (float)chunkData.TopLeft.X,
@@ -23,6 +24,7 @@ namespace MoonClimber.Blocks
             chunkData.Size * AppSettings.BlockSizeU * ORoot.ScreenUnit)
         {
             var blockSpriteProvider = GameServiceLocator.Instance.Get<BlockSpriteProvider>();
+            _logger = GameServiceLocator.Instance.Get<Logger>();
 
             ChunkData = chunkData;
 
@@ -36,6 +38,8 @@ namespace MoonClimber.Blocks
 
             var canvas = surface.Canvas;
 
+            int blockCount = 0;
+
             foreach (var block in chunkData.Blocks)
             {
                 var sprite = blockSpriteProvider.GetBlockSprite(BlockType.rock_block, block);
@@ -44,7 +48,11 @@ namespace MoonClimber.Blocks
 
                 sprite.SetCanvas(canvas);
                 sprite.Render(new OViewState());
+
+                blockCount++;
             }
+
+            _logger.Log($"block at {chunkData.X}-{chunkData.Y} draw {blockCount} sprites");
 
             _y -= AppSettings.BlockSizeU * ORoot.ScreenUnit / 2;
             _x -= AppSettings.BlockSizeU * ORoot.ScreenUnit / 2;

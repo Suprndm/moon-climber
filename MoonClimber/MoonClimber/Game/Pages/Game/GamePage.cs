@@ -68,7 +68,7 @@ namespace MoonClimber.Game.Pages.Game
 
         public override void Render()
         {
-            PhysicalEngine.Instance.RefreshPhysics();
+            //PhysicalEngine.Instance.RefreshPhysics();
 
             _tempX = 0;
             _tempY = 0;

@@ -15,6 +15,7 @@ namespace MoonClimber.Blocks.Services
         private readonly ChunkDataProvider _chunkDataProvider;
         private ChunkData _lastCurrentChunk;
         private readonly Logger _logger;
+        private bool _isUpdating;
 
         public MapLoader(ChunkDataProvider chunkDataProvider)
         {
@@ -29,7 +30,9 @@ namespace MoonClimber.Blocks.Services
             var unloadedChunks = new List<ChunkData>();
 
             if (currentChunk == null) return new MapDataUpdate(loadedChunks, unloadedChunks);
-        
+            if (_isUpdating) return new MapDataUpdate(loadedChunks, unloadedChunks);
+            _isUpdating = true;
+
 
             try
             {
@@ -58,7 +61,7 @@ namespace MoonClimber.Blocks.Services
                                     unloadedChunks.Add(chunk);
                                     refreshedChunks.Remove(chunk);
                                 }
-                                else if (!mapData.Chunks.Contains(chunk) && distance <= 3 * currentChunk.Size*blockSize)
+                                else if (!mapData.Chunks.Contains(chunk) && distance <= 3 * currentChunk.Size * blockSize)
                                 {
                                     loadedChunks.Add(chunk);
                                     refreshedChunks.Add(chunk);
@@ -70,9 +73,11 @@ namespace MoonClimber.Blocks.Services
 
                 mapData.Initialize(refreshedChunks);
                 _logger.Log($"Map Actualization succeded");
+                _isUpdating = false;
             }
             catch (Exception e)
             {
+                _isUpdating = false;
                 _logger.Log($"Map Actualization failed : {e.Message}");
             }
 
@@ -99,8 +104,8 @@ namespace MoonClimber.Blocks.Services
                 {
                     for (int j = 0; j < 6; j++)
                     {
-                        var xReference = (int)(x + (i - 3)* nbOfBlocksPerChunkRow);
-                        var yReference = (int)(y + (j - 3)* nbOfBlocksPerChunkRow);
+                        var xReference = (int)(x + (i - 3) * nbOfBlocksPerChunkRow);
+                        var yReference = (int)(y + (j - 3) * nbOfBlocksPerChunkRow);
 
                         var chunk = _chunkDataProvider.GetCurrentChunk(xReference, yReference);
                         if (chunk != null)

@@ -106,12 +106,12 @@ namespace MoonClimber.Game.Characters
             _logger.UpdatePermanentText1($"char {_x}, {_y}");
 
 
-            Movement.Amount = x;
+            //Movement.Amount = x;
 
 
             //X += x/100;
-            // //_x += x;
-            // //_y += y;
+            _x += x *3;
+            _y += y * 3;
 
             //var angle = MathHelper.Angle(new SKPoint(_x, _y), new SKPoint(_x + x, _y + y));
             //var distance = MathHelper.Distance(new SKPoint(_x, _y), new SKPoint(_x + x, _y + y));
