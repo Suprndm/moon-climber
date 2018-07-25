@@ -58,9 +58,11 @@ namespace MoonClimber.Data.ChunkData
                     for (int j = 0; j < height; j++)
                     {
                         var pixelColor = spriteData.Bitmap.GetPixel(i, j);
-                        if (IsWhite(pixelColor))
+                        if (IsEven(pixelColor) && pixelColor.Red>0)
                         {
-                            var block = new BlockData() { AbsoluteX = i, AbsoluteY = j };
+                            var blockType = TextureSpriteHelper.GetBlockTypeFromColor(pixelColor);
+
+                            var block = new BlockData() { AbsoluteX = i, AbsoluteY = j , Type = blockType };
                             blocks.Add(block);
                         }
                         else if (IsRed(pixelColor))
@@ -76,7 +78,6 @@ namespace MoonClimber.Data.ChunkData
             {
                 _logger.Log($"Unable to load blocks from {fileName} - {e.Message}");
             }
-
 
             return blocks;
         }
@@ -127,6 +128,11 @@ namespace MoonClimber.Data.ChunkData
             return color.Red == 255
                    && color.Blue == 255
                   && color.Green == 255;
+        }
+
+        private bool IsEven(SKColor color)
+        {
+            return color.Red == color.Blue && color.Blue == color.Green;
         }
 
         private bool IsRed(SKColor color)

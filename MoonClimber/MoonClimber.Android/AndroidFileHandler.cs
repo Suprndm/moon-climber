@@ -35,6 +35,5 @@ namespace MoonClimber.Droid
             var filePath = Path.Combine(documentsPath, filename);
             return File.Exists(filePath);
         }
-
     }
 }

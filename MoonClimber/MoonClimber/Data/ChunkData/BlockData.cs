@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using MoonClimber.Blocks;
+using Newtonsoft.Json;
 
 namespace MoonClimber.Data.ChunkData
 {
@@ -9,6 +11,8 @@ namespace MoonClimber.Data.ChunkData
 
         public int AbsoluteX { get; set; }
         public int AbsoluteY { get; set; }
+
+        public BlockType Type { get; set; }
 
         [JsonIgnore]
         public BlockData Left { get; set; }

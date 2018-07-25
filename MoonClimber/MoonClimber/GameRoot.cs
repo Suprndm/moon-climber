@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MoonClimber.Blocks;
 using MoonClimber.Blocks.Services;
 using MoonClimber.Data.ChunkData;
+using MoonClimber.Data.Interactive;
 using MoonClimber.Game.Sprites;
 using MoonClimber.Navigation;
 using Odin.Core;
@@ -29,29 +30,21 @@ namespace MoonClimber
         {
             try
             {
+                var spriteFileNames = new List<string>
+                {
+                    SpriteConst.SmallWhiteHalo,
+                    SpriteConst.WhiteHalo,
+                    SpriteConst.BaseMap,
+                    SpriteConst.Tree,
+                };
+
+                foreach (var fileName in TextureSpriteHelper.GetAllTexturesSpritesFileNames())
+                {
+                    spriteFileNames.Add(fileName);
+                }
+
                 await SpriteLoader.Instance.Initialize<GameRoot>(
-                    new List<string>
-                    {
-                        SpriteConst.rock_block_1,
-                        SpriteConst.rock_block_2,
-                        SpriteConst.rock_block_3,
-                        SpriteConst.rock_block_4,
-                        SpriteConst.rock_block_5,
-                        SpriteConst.rock_block_6,
-                        SpriteConst.rock_block_7,
-                        SpriteConst.rock_block_8,
-                        SpriteConst.rock_block_9,
-                        SpriteConst.rock_block_10,
-                        SpriteConst.rock_block_11,
-                        SpriteConst.rock_block_12,
-                        SpriteConst.rock_block_13,
-                        SpriteConst.rock_block_14,
-                        SpriteConst.rock_block_15,
-                        SpriteConst.rock_block_16,
-                        SpriteConst.SmallWhiteHalo,
-                        SpriteConst.WhiteHalo,
-                        SpriteConst.BaseMap,
-                    },
+                    spriteFileNames,
                     "Resources/Graphics",
                     ScreenWidth,
                     ScreenHeight);
@@ -59,6 +52,9 @@ namespace MoonClimber
 
                var chunkDataRepository = GameServiceLocator.Instance.Get<IChunkDataRepository>();
                chunkDataRepository.Initialize();
+
+                var interactiveObjectRepository = GameServiceLocator.Instance.Get<IInteractiveObjectRepository>();
+                interactiveObjectRepository.Initialize();
             }
             catch (Exception e)
             {
@@ -72,6 +68,7 @@ namespace MoonClimber
         {
             container.RegisterType<IChunkDataProvider, ChunkDataProvider>(new ContainerControlledLifetimeManager());
             container.RegisterType<IChunkDataRepository, ChunkDataRepository>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IInteractiveObjectRepository, InteractiveObjectRepository>(new ContainerControlledLifetimeManager());
             container.RegisterType<IMapLoader, MapLoader>(new ContainerControlledLifetimeManager());
             container.RegisterType<BlockSpriteProvider>(new ContainerControlledLifetimeManager());
         }

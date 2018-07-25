@@ -3,5 +3,6 @@
     public enum BlockType
     {
         rock_block,
+        grass_block,
     }
 }

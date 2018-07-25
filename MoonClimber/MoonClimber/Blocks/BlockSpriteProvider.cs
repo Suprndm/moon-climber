@@ -56,19 +56,24 @@ namespace MoonClimber.Blocks
 
             try
             {
-                // Load rockSprites
-                var rockSprites = new Dictionary<int, Sprite>();
-                foreach (var setup in _setups.Values)
+                var values = Enum.GetValues(typeof(BlockType));
+                foreach (var value in values)
                 {
-                    var spriteName = GenerateSpriteName(BlockType.rock_block, setup);
-                    var sprite = new Sprite(spriteName, 0, 0, AppSettings.BlockSizeU * ORoot.ScreenUnit, AppSettings.BlockSizeU * ORoot.ScreenUnit, paint);
-                    rockSprites.Add(setup.SpriteType, sprite);
-                }
+                    var blockType = (BlockType) value;
+                    var sprites = new Dictionary<int, Sprite>();
+                    foreach (var setup in _setups.Values)
+                    {
+                        var spriteName = GenerateSpriteName(blockType, setup);
+                        var sprite = new Sprite(spriteName, 0, 0, AppSettings.BlockSizeU * ORoot.ScreenUnit, AppSettings.BlockSizeU * ORoot.ScreenUnit, paint);
+                        sprites.Add(setup.SpriteType, sprite);
+                    }
 
-                _spritesData.Add(new KeyValuePair<BlockType, IDictionary<int, Sprite>>(BlockType.rock_block, rockSprites));
+                    _spritesData.Add(new KeyValuePair<BlockType, IDictionary<int, Sprite>>(blockType, sprites));
+                }
             }
             catch (Exception e)
             {
+
             }
         }
 
@@ -97,7 +102,7 @@ namespace MoonClimber.Blocks
 
         private string GenerateSpriteName(BlockType blockType, BlockVisualSetup blockVisualSetup)
         {
-            return $"{blockType}_{blockVisualSetup.SpriteType}.png";
+            return $"Textures/{blockType}/{blockType}_{blockVisualSetup.SpriteType}.png";
         }
     }
 }

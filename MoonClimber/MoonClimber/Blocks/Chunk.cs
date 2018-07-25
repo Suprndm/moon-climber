@@ -42,7 +42,7 @@ namespace MoonClimber.Blocks
 
             foreach (var block in chunkData.Blocks)
             {
-                var sprite = blockSpriteProvider.GetBlockSprite(BlockType.rock_block, block);
+                var sprite = blockSpriteProvider.GetBlockSprite(block.Type, block);
                 sprite.X = block.RelativeX * AppSettings.BlockSizeU * ORoot.ScreenUnit + sprite.Width / 2;
                 sprite.Y = block.RelativeY * AppSettings.BlockSizeU * ORoot.ScreenUnit + sprite.Height / 2;
 

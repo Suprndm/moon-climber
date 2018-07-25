@@ -19,6 +19,7 @@ namespace MoonClimber.Game.Pages.Game
         public float CharacterSpawnY { get; set; }
         private float _blockSize;
         private readonly MapDisplayer _mapDisplayer;
+        private readonly ObjectsDisplayer _objectsDisplayer;
         private Scene _scene;
         private Characters.Character _character;
         private Joystick _joystick;
@@ -36,10 +37,8 @@ namespace MoonClimber.Game.Pages.Game
             _mapDisplayer = new MapDisplayer();
             _scene.AddChild(_mapDisplayer);
 
-
-
-
-
+            _objectsDisplayer = new ObjectsDisplayer();
+            _scene.AddChild(_objectsDisplayer);
 
             var upButton = new TextButton(Width / 2 - 100, 0.9f * Height, 50, "Reset");
             var downButton = new TextButton(Width * 0.8f, 0.5f * Height, 100, "J");
@@ -68,7 +67,7 @@ namespace MoonClimber.Game.Pages.Game
 
         public override void Render()
         {
-            //PhysicalEngine.Instance.RefreshPhysics();
+            PhysicalEngine.Instance.RefreshPhysics();
 
             _tempX = 0;
             _tempY = 0;
@@ -91,6 +90,7 @@ namespace MoonClimber.Game.Pages.Game
             CharacterSpawnY = _blockSize * (spawnPosition.Y - 1);
 
             await _mapDisplayer.Initialize(spawnPosition.X, spawnPosition.Y);
+            await _objectsDisplayer.Initialize(spawnPosition.X, spawnPosition.Y);
 
             _character = new Characters.Character(CharacterSpawnX, CharacterSpawnY, _blockSize * 0.8f, _blockSize * 2 * 0.8f);
             _scene.AddChild(_character);
