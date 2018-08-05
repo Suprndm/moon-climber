@@ -98,7 +98,7 @@ namespace MoonClimber.Game.Characters
         private void Jump()
         {
             _isTryingToJump = false;
-            var jumpForceAmount = ORoot.ScreenUnit * AppSettings.BlockSizeU / 12;
+            var jumpForceAmount = ORoot.ScreenUnit * AppSettings.BlockSizeU / 9f;
             ApplyForce(new Force(jumpForceAmount, -Math.PI / 2, new ExplosiveForceType()));
         }
 

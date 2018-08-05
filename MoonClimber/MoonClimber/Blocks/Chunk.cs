@@ -52,7 +52,7 @@ namespace MoonClimber.Blocks
                 blockCount++;
             }
 
-            _logger.Log($"block at {chunkData.X}-{chunkData.Y} draw {blockCount} sprites");
+            //_logger.Log($"block at {chunkData.X}-{chunkData.Y} draw {blockCount} sprites");
 
             _y -= AppSettings.BlockSizeU * ORoot.ScreenUnit / 2;
             _x -= AppSettings.BlockSizeU * ORoot.ScreenUnit / 2;

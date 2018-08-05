@@ -110,7 +110,7 @@ namespace MoonClimber.Game.Pages.Game
                             {
                                 _chunksContainer.RemoveContentContent(chunk);
                                 _chunks.Remove(chunk);
-                                _logger.Log($"Removed chunk at X:{chunk.X} Y:{chunk.Y}");
+                                //_logger.Log($"Removed chunk at X:{chunk.X} Y:{chunk.Y}");
                             }
                         }
 

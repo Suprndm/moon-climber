@@ -72,7 +72,7 @@ namespace MoonClimber.Blocks.Services
                 }
 
                 mapData.Initialize(refreshedChunks);
-                _logger.Log($"Map Actualization succeded");
+                //_logger.Log($"Map Actualization succeded");
                 _isUpdating = false;
             }
             catch (Exception e)

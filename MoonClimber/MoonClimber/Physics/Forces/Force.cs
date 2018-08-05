@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MoonClimber.Maths;
+using Odin.Services;
 
 namespace MoonClimber.Physics.Forces
 {
@@ -13,13 +14,17 @@ namespace MoonClimber.Physics.Forces
     /// </summary>
     public class Force : Vector
     {
+        private Logger _logger;
+        private string _name;
         private readonly int _duration;
         private readonly ForceType _type;
         private readonly double _targetAmount;
         public ForceState State { get; set; }
 
-        public Force(double amount, double angle, ForceType type, int duration = 0)
+        public Force(double amount, double angle, ForceType type, int duration = 0, string name = "force lambda")
         {
+            _name = name;
+            _logger = GameServiceLocator.Instance.Get<Logger>();
             _duration = duration;
             _type = type;
             _targetAmount = amount;
@@ -53,6 +58,7 @@ namespace MoonClimber.Physics.Forces
                 if (Amount == 0)
                 {
                     State = ForceState.Dead;
+                    _logger.Log($"{_name} - DEAD !!!");
                 }
             }
         }

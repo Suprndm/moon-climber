@@ -104,8 +104,8 @@ namespace MoonClimber.Physics
         public void RegisterPhysicalElement(IPhysicalView physicalView)
         {
             _physicalViews.Add(physicalView);
-            var gravityAmount = ORoot.ScreenUnit * AppSettings.BlockSizeU / 100;
-            physicalView.ApplyForce(new Force(gravityAmount, Math.PI / 2, new ExplosiveForceType(), -1));
+            var gravityAmount = ORoot.ScreenUnit * AppSettings.BlockSizeU / 100f;
+            physicalView.ApplyForce(new Force(gravityAmount, Math.PI / 2, new ExplosiveForceType(), -1, "GRAVITY !!!"));
         }
 
         public void DeclareMapData(MapData mapData)

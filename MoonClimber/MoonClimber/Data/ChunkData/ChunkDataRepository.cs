@@ -72,7 +72,7 @@ namespace MoonClimber.Data.ChunkData
                     }
                 }
 
-                _logger.Log($"Loaded {blocks.Count} blocks");
+                //_logger.Log($"Loaded {blocks.Count} blocks");
             }
             catch (Exception e)
             {
