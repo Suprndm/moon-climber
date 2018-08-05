@@ -2,6 +2,8 @@
 {
     public static class SpriteConst
     {
+        public static string Background => "Background.png";
+
         public static string SmallWhiteHalo => "SmallWhiteHalo.png";
         public static string WhiteHalo => "WhiteHalo.png";
 

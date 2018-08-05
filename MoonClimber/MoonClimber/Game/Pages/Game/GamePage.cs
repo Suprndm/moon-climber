@@ -31,6 +31,9 @@ namespace MoonClimber.Game.Pages.Game
 
             _blockSize = ORoot.ScreenUnit * AppSettings.BlockSizeU;
 
+            var _background = new Background();
+            AddChild(_background);
+
             _scene = new Scene();
             AddChild(_scene);
 

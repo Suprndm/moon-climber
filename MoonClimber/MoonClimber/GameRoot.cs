@@ -36,6 +36,7 @@ namespace MoonClimber
                     SpriteConst.WhiteHalo,
                     SpriteConst.BaseMap,
                     SpriteConst.Tree,
+                    SpriteConst.Background
                 };
 
                 foreach (var fileName in TextureSpriteHelper.GetAllTexturesSpritesFileNames())
