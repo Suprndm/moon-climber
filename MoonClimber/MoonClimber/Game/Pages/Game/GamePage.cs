@@ -75,7 +75,7 @@ namespace MoonClimber.Game.Pages.Game
             if (_character != null)
             {
                 var tilt = _joystick.Tilt;
-                float characterMoveSpeed = 10;
+                float characterMoveSpeed = ORoot.ScreenUnit *  AppSettings.BlockSizeU / 6;
                 var charMoveX = (float)tilt.X * characterMoveSpeed;
                 var charMoveY = (float)tilt.Y * characterMoveSpeed;
                 _character.MoveBy(charMoveX, charMoveY);

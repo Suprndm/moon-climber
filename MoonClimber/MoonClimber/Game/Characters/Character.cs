@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MoonClimber.Game.Sprites;
 using MoonClimber.Physics;
 using MoonClimber.Physics.Forces;
+using Odin.Core;
 using Odin.Services;
 using Odin.Sprites;
 using SkiaSharp;
@@ -97,7 +98,8 @@ namespace MoonClimber.Game.Characters
         private void Jump()
         {
             _isTryingToJump = false;
-            ApplyForce(new Force(8, -Math.PI / 2, new ExplosiveForceType()));
+            var jumpForceAmount = ORoot.ScreenUnit * AppSettings.BlockSizeU / 12;
+            ApplyForce(new Force(jumpForceAmount, -Math.PI / 2, new ExplosiveForceType()));
         }
 
         public void MoveBy(float x, float y)

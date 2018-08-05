@@ -140,8 +140,10 @@ namespace MoonClimber.Game.Pages.Game
             var distance = Math.Sqrt((newX - _lastPositionProcessed.X) * (newX - _lastPositionProcessed.X)
                                      + (newY - _lastPositionProcessed.Y) * (newY - _lastPositionProcessed.Y));
 
+            var distanceInPixels = distance * ORoot.ScreenUnit * AppSettings.BlockSizeU;
+            var minDistanceInPixelToActualize =  ORoot.ScreenUnit* 10;
 
-            if (distance >= 5 && !_isUpdateting)
+            if (distanceInPixels >= minDistanceInPixelToActualize && !_isUpdateting)
             {
                 UpdateDisplay(newX, newY);
                 _lastPositionProcessed = new Point(newX, newY);
